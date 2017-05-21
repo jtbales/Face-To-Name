@@ -43,18 +43,11 @@ class SearchViewController: UIViewController, UIImagePickerControllerDelegate, U
         // Set ImageView to display the selected image.
         faceImageView.image = selectedImage
         
-        // Dismiss the picker.
-        dismiss(animated: true, completion: nil)
+        // Dismiss the picker and then search
+        dismiss(animated: true) { 
+            self.search()
+        }
     }
-    
-    //Get face Meta Data
-    
-    
-    //Search Face
-    
-    
-    //Show Face Found
-    
     
     //MARK: Actions
     
@@ -64,12 +57,21 @@ class SearchViewController: UIViewController, UIImagePickerControllerDelegate, U
     }
     
     @IBAction func done(_ sender: UIBarButtonItem) {
+        search()
+    }
+    
+    
+    //MARK: Functions
+    
+    //Custom view method for searching the view's image for a face match
+    func search() {
         if !AWSIdentityManager.default().isLoggedIn {
             presentSignInViewController()
         } else if !searching {
             if faceImageView.image == nil || faceImageView.image == #imageLiteral(resourceName: "NoPhotoSelected") {
                 self.alertMessageOkay("Photo Required", "Make sure the image has a clear view of the person's face and no one else's.")
             } else {
+                self.searchStarting()
                 AWSRekognition.default().searchForFacesFTN(faceImageView.image!, { (matchingFaces) -> Void? in
                     //Success
                     self.searchStopping()
