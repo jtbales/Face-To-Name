@@ -59,13 +59,16 @@ class EditAcquaintanceViewController: UIViewController, UIImagePickerControllerD
             //Change image to blank
             faceImageView.image = nil
             
+            //Download image
             AWSS3.default().downloadS3Image(face.s3ImageAddress, { (downloadedFileURL) -> Void? in
                 //Success
+                
                 //Show image
                 DispatchQueue.main.async { //Must modify UI on main thread
                     self.faceImageView.image = UIImage(fileURL: downloadedFileURL)
                 }
                 return nil
+                
             }, { (alertParams) -> Void? in
                 //Failure
                 self.alertMessageOkay(alertParams)
@@ -79,12 +82,15 @@ class EditAcquaintanceViewController: UIViewController, UIImagePickerControllerD
     func editFaceData() {
         Face.editFace(self, nameTextField.text?.trimmingCharacters(in: [" "]), detailsTextField.text, (faceImageChanged) ? faceImageView.image : nil, { (edittedFace) -> Void? in
             //Success
+            
             self.presentationSync {
                 self.performSegue(withIdentifier: "unwindToAcquaintList", sender: self)
             }
+            
             return nil
         }) { (alertParams) -> Void? in
             //Failure
+            
             self.alertMessageOkay(alertParams)
             
             //Reset UI
@@ -125,7 +131,6 @@ class EditAcquaintanceViewController: UIViewController, UIImagePickerControllerD
         }
         else if !saving {
             //Name Required
-            //print("Name = \(nameTextField.text ?? "Nil Name Text Field")")
             if (nameTextField.text == nil || (nameTextField.text!.trimmingCharacters(in: [" "])) == "") {
                 self.alertMessageOkay("Name Required", "Please enter a name to remember the person by.")
             }
@@ -140,9 +145,12 @@ class EditAcquaintanceViewController: UIViewController, UIImagePickerControllerD
                 //Start animations
                 progressView.setProgress(0, animated: true)
                 
+                //Same name
                 if faceToEdit?.name == nameTextField.text?.trimmingCharacters(in: [" "]) {
                     editFaceData()
-                } else {
+                }
+                //Different name
+                else {
                     AWSDynamoDBObjectMapper.default().faceNameExists(nameTextField.text?.trimmingCharacters(in: [" "]), { (faceDataExists) -> Void? in
                         if faceDataExists {
                             self.alertMessageOkay("Name Taken", "You already have an acquaintance with that name.")

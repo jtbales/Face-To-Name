@@ -10,6 +10,9 @@ import Foundation
 import GoogleMobileAds
 import AWSMobileHubHelper
 
+/*
+ * Singleton for Google Ads
+ */
 class FaceToNameAds: NSObject {
     
     static let sharedInstance = FaceToNameAds()

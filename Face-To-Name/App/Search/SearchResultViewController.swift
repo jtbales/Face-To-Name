@@ -56,8 +56,10 @@ class SearchResultViewController: UIViewController {
             //Test match
             if let match = firstMatch {
                 if let faceId = match.face?.faceId {
+                    
                     //Query for the face
                     AWSDynamoDBObjectMapper.default().queryFaceData(faceId: faceId, { (faceResults) -> Void? in
+                        
                         //Success
                         if faceResults.count == 0 {
                             //This indicates a stray faceId. Delete it.
@@ -67,12 +69,14 @@ class SearchResultViewController: UIViewController {
                         } else {
                             self.displayFace(faceResults[0], match.similarity)
                         }
+                        
                         return nil
                     }, { (alertParams) -> Void? in
                         //Failure
                         self.alertMessageOkay(alertParams)
                         return nil
                     })
+                    
                 } else {
                     print("faceId was nil for displayFirstMatch")
                     self.alertMessageOkay("No Match Found", "This person is not likely listed as an aquaintance.")
@@ -106,10 +110,12 @@ class SearchResultViewController: UIViewController {
         
         AWSS3.default().downloadS3Image(face.s3ImageAddress, { (downloadedFileURL) -> Void? in
             //Success
+            
             //Show image
             DispatchQueue.main.async { //Must modify UI on main thread
                 self.faceImageView.image = UIImage(fileURL: downloadedFileURL)
             }
+            
             return nil
         }, { (alertParams) -> Void? in
             //Failure

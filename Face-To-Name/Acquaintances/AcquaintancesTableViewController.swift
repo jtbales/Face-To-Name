@@ -10,6 +10,9 @@ import UIKit
 import AWSDynamoDB
 import AWSMobileHubHelper
 
+/*
+ * Table of the User's Acquaintances queried from Face table.
+ */
 class AcquaintancesTableViewController: UITableViewController {
 
     var acquaintanceRows: [Face]?
@@ -84,9 +87,11 @@ class AcquaintancesTableViewController: UITableViewController {
         if editingStyle == .delete {
             // Delete the row from the data source
             print("Deleting cell at index \(indexPath.row)")
+            
             //Assign object map details
             let cell = tableView.cellForRow(at: indexPath) as! AcquaintancesTableViewCell //Get cell details
             if let faceToDelete = cell.face {
+                
                 //Automatically remove the cell for fluidness
                 self.acquaintanceRows?.remove(at: indexPath.row)
                 tableView.deleteRows(at: [indexPath], with: UITableViewRowAnimation.automatic)
@@ -108,9 +113,6 @@ class AcquaintancesTableViewController: UITableViewController {
             }
             
         }
-//        else if editingStyle == .insert {
-//            // Create a new instance of the appropriate class, insert it into the array, and add a new row to the table view
-//        }
     }
     
     //Load more by dragging
@@ -180,32 +182,7 @@ class AcquaintancesTableViewController: UITableViewController {
             })
         }
     }
-    
-//    func generateTestData() {
-//        UIApplication.shared.isNetworkActivityIndicatorVisible = true
-//        
-//        let dynamoDBObjectMapper = AWSDynamoDBObjectMapper.default()
-//        
-//        var tasks = [AWSTask<AnyObject>]()
-//        let nameArray =  ["Galaxy Invaders","Meteor Blasters", "Starship X", "Alien Adventure","Attack Ships","John","Bob","Kathrine","Alice","Tim"]
-//        for i in 0..<10 {
-//            let tableRow = Faces()
-//            tableRow?._name = nameArray[i]
-//            tasks.append(dynamoDBObjectMapper.save(tableRow!))
-//        }
-//        
-//        AWSTask<AnyObject>(forCompletionOfAllTasks: Optional(tasks)).continueWith(executor: AWSExecutor.mainThread(), block: { (task: AWSTask) -> AnyObject? in
-//            if let error = task.error as NSError? {
-//                print("Error: \(error)")
-//            }
-//            
-//            UIApplication.shared.isNetworkActivityIndicatorVisible = false
-//            
-//            self.refreshList(true)
-//            return nil
-//        })
-//    }
-    
+
     /*
     // Override to support rearranging the table view.
     override func tableView(_ tableView: UITableView, moveRowAt fromIndexPath: IndexPath, to: IndexPath) {
@@ -226,17 +203,20 @@ class AcquaintancesTableViewController: UITableViewController {
     //Select row
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
+        
+        //Get selected cell
         let cell = tableView.cellForRow(at: indexPath) as! AcquaintancesTableViewCell
         print("Selected cell with name \(cell.nameLabel.text ?? "nil")")
+        
+        //Segue to Edit view
         performSegue(withIdentifier: "EditAcquaintanceShowSegue", sender: cell)
     }
 
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        // Get the new view controller using segue.destinationViewController.
-        // Pass the selected object to the new view controller.
+        //Edit
         if let destinationViewController = segue.destination as? EditAcquaintanceViewController {
             let cell = sender as? AcquaintancesTableViewCell
-            destinationViewController.faceToEdit = cell?.face
+            destinationViewController.faceToEdit = cell?.face //Pass face object
         }
     }
     

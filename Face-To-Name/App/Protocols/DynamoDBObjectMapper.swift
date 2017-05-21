@@ -9,7 +9,18 @@
 import Foundation
 import AWSDynamoDB
 
+/*
+ * Provides DB methods particular to Face-To-Name's DB Objects
+ */
 extension AWSDynamoDBObjectMapper {
+    /**
+     * Saves face object to DB
+     *
+     * - parameter face: face to be saved
+     * - parameter config: optional configuration for save
+     * - parameter successClosure(Face!): Passes face object given in parameter if saved successfully.
+     * - parameter failureClosure(AlertParams): Passes error.
+     */
     func saveFace(_ face: Face?, _ config: AWSDynamoDBObjectMapperConfiguration?, _ successClosure: @escaping (Face!) -> Void?, _ failureClosure: @escaping (AlertParams) -> Void?) {
         if let face = face {
             //Save face values in DynamoDB
@@ -50,7 +61,13 @@ extension AWSDynamoDBObjectMapper {
         }
     }
     
-    //Delete face entry from DynamoDB
+    /**
+     * Delete face entry from DynamoDB
+     *
+     * - parameter faceToDelete: face object to delete from DB
+     * - parameter successClosure()
+     * - parameter failureClosure(AlertParams): Passes error.
+     */
     func deleteFace(_ faceToDelete: Face!, _ successClosure: @escaping () -> Void?, _ failureClosure: @escaping (AlertParams) -> Void?) {
         self.remove(faceToDelete, completionHandler: { (error: Error?) in
             if let error = error as NSError? {
@@ -72,7 +89,13 @@ extension AWSDynamoDBObjectMapper {
         })
     }
     
-    //Query for acquaintance with the name
+    /**
+     * Query for acquaintance with the name
+     *
+     * - parameter nameToQuery
+     * - parameter successClosure(Face!): Passes the face that was found in DB
+     * - parameter failureClosure(AlertParams): Passes error.
+     */
     func queryFaceData(_ nameToQuery: String?, _ successClosure: @escaping (Face!) -> Void?, _ failureClosure: @escaping (AlertParams) -> Void?) {
         if let nameToQuery = nameToQuery {
             let objectMapper = AWSDynamoDBObjectMapper.default()
@@ -111,7 +134,13 @@ extension AWSDynamoDBObjectMapper {
         }
     }
     
-    //Queries by faceId. Passes list of matching Faces to successClosure
+    /**
+     * Queries by faceId for Face Table DB references
+     *
+     * - parameter faceId: faceId to query by
+     * - parameter successClosure([Face]): Passes Face DB references
+     * - parameter failureClosure(AlertParams): Passes error.
+     */
     func queryFaceData(faceId: String!, _ successClosure: @escaping ([Face]) -> Void?, _ failureClosure: @escaping (AlertParams) -> Void?) {
         let objectMapper = AWSDynamoDBObjectMapper.default()
         let queryExpression = AWSDynamoDBQueryExpression()
@@ -139,7 +168,13 @@ extension AWSDynamoDBObjectMapper {
         })
     }
     
-    //Query for acquaintance with the name. Check if it exists
+    /**
+     * Query for acquaintance with the name. Check if it exists in Face table
+     *
+     * - parameter nameToQuery
+     * - parameter successClosure(Bool): Passes true if the name is referenced in Face table
+     * - parameter failureClosure(AlertParams): Passes error.
+     */
     func faceNameExists(_ nameToQuery: String?, _ successClosure: @escaping (Bool) -> Void?, _ failureClosure: @escaping (AlertParams) -> Void?) {
         if let nameToQuery = nameToQuery {
             let objectMapper = AWSDynamoDBObjectMapper.default()

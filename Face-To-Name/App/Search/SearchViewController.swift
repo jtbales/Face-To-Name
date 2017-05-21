@@ -12,6 +12,9 @@ import AWSRekognition
 import AWSMobileHubHelper
 import AWSS3
 
+/*
+ * Can search for a match for the face in an image provided by the user.
+ */
 class SearchViewController: UIViewController, UIImagePickerControllerDelegate, UINavigationControllerDelegate {
 
     @IBOutlet weak var faceImageView: UIImageView!
@@ -20,9 +23,6 @@ class SearchViewController: UIViewController, UIImagePickerControllerDelegate, U
     
     override func viewDidLoad() {
         super.viewDidLoad()
-
-        // Do any additional setup after loading the view.
-        
     }
     
     override func viewDidAppear(_ animated: Bool) {
@@ -67,11 +67,16 @@ class SearchViewController: UIViewController, UIImagePickerControllerDelegate, U
     func search() {
         if !AWSIdentityManager.default().isLoggedIn {
             presentSignInViewController()
-        } else if !searching {
+        }
+        else if !searching {
+            //Check for image
             if faceImageView.image == nil || faceImageView.image == #imageLiteral(resourceName: "NoPhotoSelected") {
                 self.alertMessageOkay("Photo Required", "Make sure the image has a clear view of the person's face and no one else's.")
-            } else {
+            }
+            else {
                 self.searchStarting()
+                
+                //Search image
                 AWSRekognition.default().searchForFacesFTN(faceImageView.image!, { (matchingFaces) -> Void? in
                     //Success
                     self.searchStopping()

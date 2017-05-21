@@ -11,8 +11,8 @@ import AWSCognito
 import AWSMobileHubHelper
 
 extension UIContentContainer where Self: UIViewController {
+    //Send to Sign in view if not logged in
     func presentSignInViewController() {
-        //Send to Sign in view if not logged in
         if !AWSIdentityManager.default().isLoggedIn {
             let storyboard = UIStoryboard(name: "SignIn", bundle: nil)
             let viewController = storyboard.instantiateViewController(withIdentifier: "SignIn")

@@ -9,6 +9,9 @@
 
 import UIKit
 
+/*
+ * Extends all UIViewControllers with convenient ways to display alerts that are guarented not to collide with presented views.
+ */
 extension UIContentContainer where Self: UIViewController {
     //Ensures that the code is only executed if the current view presented on this VC is dismissed
     func presentationSync(closure: @escaping () -> Void) {

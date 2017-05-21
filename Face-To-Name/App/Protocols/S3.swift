@@ -9,17 +9,24 @@
 import Foundation
 import AWSS3
 
+/*
+ * AWSS3 Image methods. Delete, Upload, Download
+ */
 extension AWSS3 {
-    //Delete attempt for s3Image at address
-    func deleteS3Image(_ s3ImageAddress: String!) {
+    /**
+     * Delete attempt for s3Image at address
+     *
+     * - parameter s3ObjectAddress: s3 Address for the object to delete
+     */
+    func deleteS3Object(_ s3ObjectAddress: String!) {
         let delete = AWSS3DeleteObjectRequest()
         delete?.bucket = bucket
-        delete?.key = s3ImageAddress
+        delete?.key = s3ObjectAddress
         
         let response = self.deleteObject(delete!)
         //Peform deletion silently
         response.continueWith { (task) -> Any? in
-            print("Attempted delete s3Image at \(s3ImageAddress)")
+            print("Attempted delete s3Image at \(s3ObjectAddress)")
             if let error = task.error {
                 print(error)
             } else {
@@ -29,6 +36,18 @@ extension AWSS3 {
         }
     }
     
+    /**
+     * Uploads UIImage to s3
+     * Steps:
+     *  1. Converts to PNG
+     *  2. Saves PNG to file
+     *  3. Attempts Upload
+     *
+     * - parameter faceImage: image to upload
+     * - parameter successClosure(String!): Passes s3ObjectAddress
+     * - parameter failureClosure(AlertParams): Passes error.
+     * - returns AWSS3TransferManagerUploadRequest? if request is started. Can be used to cancel upload or monitor progress.
+     */
     func uploadS3Image(_ faceImage: UIImage, _ successFunc: @escaping (String!) -> Void?, _ failureFunc: @escaping (AlertParams) -> Void?) -> AWSS3TransferManagerUploadRequest? {
         //Set details for file that will be transfered
         let uploadDirName = "upload"
@@ -131,8 +150,13 @@ extension AWSS3 {
         return nil
     }
     
-    //s3ImageAddress for image to download
-    //successFunc(URL!) string is the downloadingFileURL
+    /**
+     * Downloads image at address
+     *
+     * - parameter s3ImageAddress: s3 Image Address to get download
+     * - parameter successClosure(URL!): Passes the downloadingFileURL located on local device
+     * - parameter failureClosure(AlertParams): Passes error.
+     */
     func downloadS3Image(_ s3ImageAddress: String!, _ successFunc: @escaping (URL!) -> Void?, _ failureFunc: @escaping (AlertParams) -> Void?) {
         //Asynchronously load the face image
         let downloadRequest = AWSS3TransferManagerDownloadRequest()
@@ -192,6 +216,7 @@ extension AWSS3 {
 }
 
 extension UIImage {
+    //init UIImage(URL!)
     convenience init?(fileURL: URL!) {
         //Get image data
         if let data = NSData.init(contentsOf: fileURL) {

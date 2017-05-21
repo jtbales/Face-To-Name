@@ -8,8 +8,11 @@
 
 import UIKit
 
+/*
+ * Extension privides methods for selecting images using the Camera or Photo Library.
+*/
 extension UIImagePickerControllerDelegate where Self: UIViewController {
-    //Prompts to select image source from Photot Library or Camera.
+    //Prompts to select image source from Photo Library or Camera.
     func imageTypeSelect() {
         if presentedViewController == nil { //Only show if there's no other alert presented
             let alertController = UIAlertController (

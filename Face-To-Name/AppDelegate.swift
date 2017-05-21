@@ -22,7 +22,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         AWSServiceManager.default().defaultServiceConfiguration = configuration
         
         //Google
-        GADMobileAds.configure(withApplicationID: "ca-app-pub-7770057470061315~5486709180")
+        //GADMobileAds.configure(withApplicationID: "ca-app-pub-7770057470061315~5486709180")
         //AWS
         return AWSMobileClient.sharedInstance.didFinishLaunching(application, withOptions: launchOptions)
     }

@@ -10,6 +10,9 @@ import Foundation
 import AWSRekognition
 import AWSDynamoDB
 
+/*
+ * Provides Rekognition methods
+*/
 extension AWSRekognition {
     //FTN stands for Face to Name
     
@@ -32,7 +35,13 @@ extension AWSRekognition {
         }
     }
     
-    //Only deletes the faceId if there is no other entry in the DB reference in the same faceId
+    /**
+     * Only deletes the faceId if there is no other entry
+     * in the DB reference in the same faceId
+     *
+     * - parameter name: name asociated with the faceId to delete. Excludes this name when checking for references to faceId.
+     * - parameter faceId: faceId to delete
+     */
     func deleteFaceIdsSafelyFTN(_ name: String?, _ faceId: String!) {
         AWSDynamoDBObjectMapper.default().queryFaceData(faceId: faceId, { (matchingFaces) -> Void? in
             //Success
@@ -58,7 +67,7 @@ extension AWSRekognition {
         }
     }
     
-    //Create collection
+    //Create collection using the User's identity
     func createCollectionFTN() {
         let createCollection = AWSRekognitionCreateCollectionRequest()
         createCollection?.collectionId = UserIdentityAccess.getCollectionId()
@@ -79,7 +88,14 @@ extension AWSRekognition {
         }
     }
     
-    //Index image
+    /**
+     * Indexes an image in s3
+     *
+     * - parameter imageAddress: s3 Image Address to index
+     * - parameter face: optional face object to add the resulting faceId to.
+     * - parameter successClosure(Face!): Passes face object given in parameter or new face if not provided. face will have faceId
+     * - parameter failureClosure(AlertParams): Passes error.
+     */
     func indexImageFaceFTN(_ imageAddress: String!, _ face: Face?, _ successClosure: @escaping (Face!) -> Void?, _ failureClosure: @escaping (AlertParams) -> Void?) {
         let indexFaces = AWSRekognitionIndexFacesRequest()!
         indexFaces.collectionId = UserIdentityAccess.getCollectionId()
@@ -140,7 +156,13 @@ extension AWSRekognition {
         })
     }
     
-    //Searches by image. Results with array of face matches
+    /**
+     *  Searches by UIImage for matching faces within user's collection
+     *
+     * - parameter faceImage: UIImage to search
+     * - parameter successClosure([AWSRekognitionFaceMatch]): Passes face matches found in the image
+     * - parameter failureClosure(AlertParams): Passes error.
+     */
     func searchForFacesFTN(_ faceImage: UIImage, _ successClosure: @escaping ([AWSRekognitionFaceMatch]) -> Void?, _ failureClosure: @escaping (AlertParams) -> Void?) {
         //Search Faces Request
         let searchFacesByImageReq = AWSRekognitionSearchFacesByImageRequest()

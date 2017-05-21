@@ -172,13 +172,6 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		52119CE51E8C25F700650034 /* Inherited */ = {
-			isa = PBXGroup;
-			children = (
-			);
-			name = Inherited;
-			sourceTree = "<group>";
-		};
 		52119CEF1E8C321A00650034 /* Acquaintances */ = {
 			isa = PBXGroup;
 			children = (
@@ -195,13 +188,6 @@
 				52119CF51E8C494300650034 /* FaceToNameAds.swift */,
 			);
 			name = Ads;
-			sourceTree = "<group>";
-		};
-		521FC5491EB9347100F49521 /* Animation */ = {
-			isa = PBXGroup;
-			children = (
-			);
-			name = Animation;
 			sourceTree = "<group>";
 		};
 		525B802A1E7B60DE009A83AA = {
@@ -299,8 +285,6 @@
 				52119CF21E8C371200650034 /* Ads */,
 				5280728A1EC3893E00440482 /* Search */,
 				52119CEF1E8C321A00650034 /* Acquaintances */,
-				521FC5491EB9347100F49521 /* Animation */,
-				52119CE51E8C25F700650034 /* Inherited */,
 				52F406FE1E8996AA006C2C4A /* More */,
 				525B80F11E7B8AE8009A83AA /* SignIn */,
 			);
