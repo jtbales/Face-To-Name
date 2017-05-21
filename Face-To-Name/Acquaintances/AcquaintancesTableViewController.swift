@@ -128,10 +128,11 @@ class AcquaintancesTableViewController: UITableViewController {
     
     //Refresh Table List
     func refreshList(_ startFromBeginning: Bool) {
-        //verify logged in 
-        presentSignInViewController()
-        
-        if (self.lock?.try() != nil) {
+        //verify logged in
+        if !AWSIdentityManager.default().isLoggedIn {
+            presentSignInViewController()
+        }
+        else if self.lock?.try() != nil {
             if startFromBeginning {
                 self.lastEvaluatedKey = nil;
                 self.doneLoading = false

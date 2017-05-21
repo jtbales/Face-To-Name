@@ -36,7 +36,6 @@ class AddAcquaintanceViewController: UIViewController, UIImagePickerControllerDe
     override func viewDidAppear(_ animated: Bool) {
         //Allow user to sign if in needed
         presentSignInViewController()
-//        print("presentedViewController is: \(presentedViewController == nil ? "" : "NOT ")nil")
     }
 
     override func didReceiveMemoryWarning() {

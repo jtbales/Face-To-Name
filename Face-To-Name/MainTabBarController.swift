@@ -22,7 +22,7 @@ class MainTabBarController: UITabBarController {
     
     override func viewDidAppear(_ animated: Bool) {
         //Allow user to sign if in needed
-        presentSignInViewController()
+        //presentSignInViewController() //Taken care of by AcquaintanceList page
     }
 
     override func didReceiveMemoryWarning() {
