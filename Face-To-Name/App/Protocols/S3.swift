@@ -164,51 +164,55 @@ extension AWSS3 {
         downloadRequest?.key = s3ImageAddress
         downloadRequest?.downloadingFileURL = URL(fileURLWithPath: NSTemporaryDirectory()).appendingPathComponent(s3ImageAddress)
         
-        //TODO keep image saved. Check if still there, use if is. Delete when changed. Reduces loading.
-        //Delete file if already there
-        do {
-            try FileManager.default.removeItem(at: (downloadRequest?.downloadingFileURL.absoluteURL)!)
-        } catch {
-            print("Failed to remove existing image file. Not an issue if none exists. \(error)")
-        }
-        
-        //Make sure directory exists
-        if let downloadDirectory = downloadRequest?.downloadingFileURL.deletingLastPathComponent() {
-            if !FileManager.default.fileExists(atPath: downloadDirectory.absoluteString) {
-                print("Download path doesn't exists. Creating path: \(downloadDirectory.absoluteString)")
-                do {
-                    try FileManager.default.createDirectory(at: downloadDirectory, withIntermediateDirectories: true, attributes: nil)
-                } catch {
-                    print("Failed to create directory for upload png: \(error)")
-                }
-            }
-        } else {
-            print("When downloading s3 image downloadRequest?.downloadingFileURL.deletingLastPathComponent() was nil")
-        }
-        
-        let transferManager = AWSS3TransferManager.default()
         if let downloadRequest = downloadRequest {
-            transferManager.download(downloadRequest).continueWith(block: { (task) -> Void? in
-                if let error = task.error as NSError? {
-                    if error.domain == AWSS3TransferManagerErrorDomain, let code = AWSS3TransferManagerErrorType(rawValue: error.code) {
-                        switch code {
-                        case .cancelled, .paused:
-                            break
-                        default:
+            //Keep image saved. Check if still there, use if is. Delete when changed. Reduces loading.
+            print(downloadRequest.downloadingFileURL.path)
+            if FileManager.default.fileExists(atPath: downloadRequest.downloadingFileURL.path){
+                //File already exists local, no need to download it again
+                successFunc(downloadRequest.downloadingFileURL)
+            }
+            else {
+                //Delete file if already there samehow
+                do {
+                    try FileManager.default.removeItem(at: (downloadRequest.downloadingFileURL.absoluteURL))
+                } catch {
+                    print("Failed to remove existing image file. Not an issue if none exists. \(error)")
+                }
+                
+                //Make sure directory exists
+                let downloadDirectory = downloadRequest.downloadingFileURL.deletingLastPathComponent()
+                if !FileManager.default.fileExists(atPath: downloadDirectory.absoluteString) {
+                    print("Download path doesn't exists. Creating path: \(downloadDirectory.absoluteString)")
+                    do {
+                        try FileManager.default.createDirectory(at: downloadDirectory, withIntermediateDirectories: true, attributes: nil)
+                    } catch {
+                        print("Failed to create directory for upload png: \(error)")
+                    }
+                }
+                
+                let transferManager = AWSS3TransferManager.default()
+                transferManager.download(downloadRequest).continueWith(block: { (task) -> Void? in
+                    if let error = task.error as NSError? {
+                        if error.domain == AWSS3TransferManagerErrorDomain, let code = AWSS3TransferManagerErrorType(rawValue: error.code) {
+                            switch code {
+                            case .cancelled, .paused:
+                                break
+                            default:
+                                print("Error downloading: \(downloadRequest.key ?? "") Error: \(error)")
+                                failureFunc(AlertParams(title: "Download Faild", message: error.userInfo["Message"] as? String ?? "Could not download image."))
+                            }
+                        } else {
                             print("Error downloading: \(downloadRequest.key ?? "") Error: \(error)")
                             failureFunc(AlertParams(title: "Download Faild", message: error.userInfo["Message"] as? String ?? "Could not download image."))
                         }
                     } else {
-                        print("Error downloading: \(downloadRequest.key ?? "") Error: \(error)")
-                        failureFunc(AlertParams(title: "Download Faild", message: error.userInfo["Message"] as? String ?? "Could not download image."))
+                        //Succesfull
+                        print("Download complete for: \(downloadRequest.key ?? "")")
+                        successFunc(downloadRequest.downloadingFileURL)
                     }
-                } else {
-                    //Succesfull
-                    print("Download complete for: \(downloadRequest.key ?? "")")
-                    successFunc(downloadRequest.downloadingFileURL)
-                }
-                return nil
-            })
+                    return nil
+                })
+            }
         } else {
             print("downloadRequest was somehow nil")
         }
